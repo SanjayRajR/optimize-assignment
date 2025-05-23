@@ -119,23 +119,21 @@ export default function Gallery() {
             >
               <div className="relative aspect-square">
                 {idx === photos.length - 1 && (
-
                   <Image
                     fill
                     src={photo.image}
                     className="object-cover"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    sizes="(max-width: 1200px) 50vw, 33vw"
                     alt={photo.description}
                     ref={setLastElement}
                   />
                 )}
                 {idx !== photos.length - 1 && (
-
                   <Image
                     fill
                     src={photo.image}
                     className="object-cover"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    sizes="(max-width: 1200px) 100vw"
                     alt={photo.description}
                   />
                 )}
