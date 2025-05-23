@@ -35,6 +35,12 @@ export default function AppBar() {
             >
               Blog
             </Link>
+            <Link
+              href="/tutorials"
+              className={styles.navLinks}
+            >
+              Tutorials
+            </Link>
           </div>
         </div>
       </div>
