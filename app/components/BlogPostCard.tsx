@@ -21,7 +21,7 @@ export default function BlogPostCard({ post }: BlogPostCardProps) {
         <Image 
           fill 
           src={post.image} 
-          objectFit="cover"
+          style={{objectFit: "cover"}}
           alt={post.title}
           sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
         />

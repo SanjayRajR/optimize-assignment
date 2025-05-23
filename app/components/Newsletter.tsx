@@ -1,11 +1,12 @@
 "use client"
 
-import React, { useCallback, useState } from "react";
-import SuccessAlert from "./SuccessAlert";
+import React, { useCallback, useEffect, useState } from "react";
 
 export default function Newsletter() {
 
+    const [timerId, setTimerId] = useState<any>(null);
     const [email, setEmail] = useState<string>();
+    const [showAlert, setShowAlert] = useState(false);
 
     const handleEmailInput = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -13,9 +14,27 @@ export default function Newsletter() {
       setEmail(newValue)
     }, [email])
 
-    const handleEmailSubscription = (e: any) => {
-      e.preventDefault();
+    const handleEmailSubscription = (event: any) => {
+      event.preventDefault();
+      setShowAlert(true);
+      setEmail("")
     }
+
+    useEffect(() => {
+
+        if(showAlert) {
+          const id = setTimeout(() => {
+            setShowAlert(false)
+          }, 2000)
+
+          setTimerId(id)
+        }
+
+        return () => {
+          clearTimeout(timerId)
+        }        
+
+    }, [showAlert])
 
   return (
     <div className="mt-12 text-center">
@@ -39,6 +58,12 @@ export default function Newsletter() {
           Subscribe
         </button>
       </form>
+
+      {showAlert && (
+        <div role="alert" className="max-w-md mx-auto mt-4 relative flex w-full p-3 text-sm text-white bg-green-600 rounded-md">
+          Subscribed Successfully!
+        </div>
+        )}
     </div>
   );
 }
