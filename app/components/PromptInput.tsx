@@ -66,9 +66,10 @@ export default function PromptInput({
       </label>
       <textarea
         id="prompt"
+        maxLength={500}
         value={localPrompt}
         onChange={handlePromptChange}
-        className="w-full h-32 p-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+        className="w-full h-32 p-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-black"
         placeholder="A serene landscape with mountains and a lake at sunset..."
       />
       <div className="text-sm text-gray-500 mt-1">{charCountDisplay}</div>

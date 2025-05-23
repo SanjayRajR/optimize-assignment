@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createClient } from "pexels";
 
 interface Photo {
@@ -11,7 +11,8 @@ interface Photo {
   image: string;
   tags: string[];
   photographer: string;
-  photographerUrl: string;
+  photographerUrl: string
+  ;
 }
 
 export default function Gallery() {
@@ -19,19 +20,43 @@ export default function Gallery() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+
+  //Infinite pagination config
+  const [pageNumber, setPageNumber] = useState(1);
+  const [lastElement, setLastElement] = useState<any>();
+  const maxPages = 5;
+
+  const observer = useRef<any>()
+
+  useEffect (() => {
+    observer.current = new IntersectionObserver((entries) => {
+      const first = entries[0];
+      if (first.isIntersecting) {
+        setPageNumber((prevPage) => prevPage + 1)
+      }
+    })
+  }, [])
+
+  useEffect(() => {
+    const currentElement = lastElement;
+    const currentObserver = observer.current;
+    if (currentElement) currentObserver.observe(currentElement);
+
+    return () => {
+      if (currentElement) currentObserver.unobserve(currentElement);
+    };
+  }, [lastElement]);
+
   useEffect(() => {
     const fetchPhotos = async () => {
-      console.log(
-        "fetching photos with API key",
-        process.env.NEXT_PUBLIC_PEXELS_API_KEY
-      );
       try {
         const client = createClient(
           process.env.NEXT_PUBLIC_PEXELS_API_KEY || ""
         );
         const response = await client.photos.search({
           query: "ai generated art",
-          per_page: 80,
+          page: pageNumber,
+          per_page: 15,
         });
 
         if ("error" in response) {
@@ -48,7 +73,7 @@ export default function Gallery() {
           photographerUrl: photo.photographer_url,
         }));
 
-        setPhotos(formattedPhotos);
+        setPhotos((prevPhotos) => prevPhotos.concat(formattedPhotos));
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
@@ -56,21 +81,9 @@ export default function Gallery() {
       }
     };
 
-    fetchPhotos();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-300">
-            Loading gallery...
-          </p>
-        </div>
-      </div>
-    );
-  }
+    if(pageNumber < maxPages)
+      fetchPhotos();
+  }, [pageNumber]);
 
   if (error) {
     return (
@@ -89,6 +102,8 @@ export default function Gallery() {
   }
 
   return (
+    <>
+    
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
       <div className="container mx-auto px-4">
         <h1 className="text-4xl font-bold text-center mb-4">Gallery</h1>
@@ -97,17 +112,33 @@ export default function Gallery() {
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {photos.map((photo) => (
+          {photos.map((photo, idx) => (
             <div
-              key={photo.id}
+              key={`${photo.id}-${idx}`}
               className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden transform transition-transform hover:scale-105"
             >
               <div className="relative aspect-square">
-                <img
-                  src={photo.image}
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                />
+                {idx === photos.length - 1 && (
+
+                  <Image
+                    fill
+                    src={photo.image}
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    alt={photo.description}
+                    ref={setLastElement}
+                  />
+                )}
+                {idx !== photos.length - 1 && (
+
+                  <Image
+                    fill
+                    src={photo.image}
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    alt={photo.description}
+                  />
+                )}
               </div>
               <div className="p-6">
                 <h3 className="text-xl font-semibold mb-2">{photo.title}</h3>
@@ -120,5 +151,16 @@ export default function Gallery() {
         </div>
       </div>
     </div>
+    {loading && (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600 dark:text-gray-300">
+            Loading gallery...
+          </p>
+        </div>
+      </div>
+    )}
+    </>
   );
 }
