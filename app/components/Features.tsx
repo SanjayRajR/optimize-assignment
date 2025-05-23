@@ -1,13 +1,22 @@
-interface Feature {
-  title: string;
-  description: string;
-}
+const features = [
+  {
+    title: "AI-Powered Generation",
+    description:
+      "Create unique illustrations and logos in seconds using advanced AI technology",
+  },
+  {
+    title: "Professional Quality",
+    description:
+      "Get high-resolution, print-ready artwork suitable for any project",
+  },
+  {
+    title: "Easy to Use",
+    description:
+      "Simple text prompts transform into beautiful artwork with just a few clicks",
+  },
+];
 
-interface FeaturesProps {
-  features: Feature[];
-}
-
-export default function Features({ features }: FeaturesProps) {
+export default function Features() {
   return (
     <section className="py-20 bg-white dark:bg-gray-900">
       <div className="container mx-auto px-4">

@@ -15,7 +15,6 @@ export default function Newsletter() {
     }, [email])
 
     const handleEmailSubscription = (event: any) => {
-      event.preventDefault();
       setShowAlert(true);
       setEmail("")
     }
@@ -42,17 +41,17 @@ export default function Newsletter() {
       <p className="text-gray-600 dark:text-gray-300 mb-6">
         Subscribe to our newsletter for the latest articles and updates
       </p>
-      <form className="max-w-md mx-auto flex gap-4">
+      <form className="max-w-md mx-auto flex gap-4" action={handleEmailSubscription}>
         <input
           type="email"
           value={email}
           placeholder="Enter your email"
           onChange={handleEmailInput}
+          required
           className="flex-1 px-4 py-2 text-black rounded-lg border focus:ring-2 focus:ring-purple-500 focus:border-transparent"
         />
         <button
           type="submit"
-          onClick={handleEmailSubscription}
           className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
         >
           Subscribe
