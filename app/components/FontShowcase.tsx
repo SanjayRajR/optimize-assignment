@@ -134,7 +134,7 @@ export default function FontShowcase() {
         <p className="text-center text-gray-600 dark:text-gray-300 mb-12">
           Experience the power of AI with our extensive font collection
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-h-[500px] overflow-x-auto">
           {fonts.map((font) => (
             <div
               key={font.name}
